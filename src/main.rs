@@ -4,73 +4,73 @@ mod system_config;
 mod theme;
 
 use std::sync::Mutex;
-use iced::{Application, Command, Element, executor, Renderer, Settings, Theme, window};
-use iced::widget::text;
-use iced::window::icon;
-use crate::message::RootMessage;
+use std::io::Write;
+use std::rc::Rc;
+use env_logger::Builder;
+use gpui::{App, AppContext, IntoElement, Render, ViewContext, VisualContext, WindowOptions};
+use log::info;
 use crate::system_config::init_system;
 use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-struct NotedFlags(Vault);
-
-impl Default for NotedFlags {
-    fn default() -> Self {
-        NotedFlags(init_system())
-    }
-}
-
 #[derive(Debug)]
 struct Noted {
-    vault: Mutex<Vault>
+    vault: Rc<Mutex<Vault>>
 }
 
-impl Application for Noted {
-    type Executor = executor::Default;
-    type Message = RootMessage;
-    type Theme = Theme;
-    type Flags = NotedFlags;
-
-    fn new(flags: Self::Flags) -> (Self, Command<Self::Message>) {
-        (
-            Noted {
-                vault: Mutex::new(flags.0)
-            },
-            Command::none()
-        )
+impl Render for Noted {
+    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
+        todo!()
     }
+}
 
-    fn title(&self) -> String {
-        format!("Noted!{}", VERSION)
-    }
+fn main() {
+    init_logger();
 
-    fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
-        match message {
-            RootMessage::LoadVault(vault) => {
-                *self.vault.lock().unwrap() = vault;
+    info!("Starting up Noted v{}", VERSION);
+    App::new().run(app);
+}
+
+fn app(cx: &mut AppContext) {
+    let vault = Rc::new(Mutex::new(init_system()));
+
+    cx.open_window(WindowOptions {
+        ..Default::default()
+    }, |cx| {
+        let noted = Noted {
+            vault
+        };
+
+        cx.new_view(|_cx| noted)
+    });
+}
+
+fn init_logger() {
+    Builder::new()
+        .parse_default_env()
+        .format(|buf, record| {
+            use env_logger::fmt::Color;
+
+            let subtle = buf
+                .style()
+                .set_color(Color::Black)
+                .set_intense(true)
+                .clone();
+            write!(buf, "{}", subtle.value("["))?;
+            write!(
+                buf,
+                "{} ",
+                chrono::Local::now().format("%Y-%m-%dT%H:%M:%S%:z")
+            )?;
+            write!(buf, "{:<5}", buf.default_styled_level(record.level()))?;
+            if let Some(path) = record.module_path() {
+                write!(buf, " {}", path)?;
             }
-        }
-
-        Command::none()
-    }
-
-    fn view(&self) -> Element<'_, Self::Message, Self::Theme, Renderer> {
-        let vault_name = self.vault.lock().unwrap().name();
-        text(vault_name).into()
-    }
-
-    fn theme(&self) -> Self::Theme {
-        self.vault.lock().unwrap().vault_config.lock().unwrap().theme.into()
-    }
-}
-
-fn main() -> iced::Result {
-    Noted::run(Settings {
-        window: window::Settings {
-            icon: Some(icon::from_file_data(include_bytes!("../icons/icon.png"), None).expect("Invalid icon")),
-            ..window::Settings::default()
-        },
-        ..Settings::default()
-    })
+            write!(buf, "{}", subtle.value("]"))?;
+            writeln!(buf, " {}", record.args())
+        })
+        .filter_level(log::LevelFilter::Warn)
+        .filter_module("noted", log::LevelFilter::Trace)
+        .init();
 }
