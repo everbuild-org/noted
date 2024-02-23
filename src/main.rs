@@ -46,11 +46,18 @@ impl Application for Noted {
     }
 
     fn update(&mut self, message: Self::Message) -> Command<Self::Message> {
+        match message {
+            RootMessage::LoadVault(vault) => {
+                *self.vault.lock().unwrap() = vault;
+            }
+        }
+
         Command::none()
     }
 
     fn view(&self) -> Element<'_, Self::Message, Self::Theme, Renderer> {
-        text("Hello, world!").into()
+        let vault_name = self.vault.lock().unwrap().name();
+        text(vault_name).into()
     }
 
     fn theme(&self) -> Self::Theme {

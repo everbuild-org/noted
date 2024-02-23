@@ -1,26 +1,41 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, sync::Arc};
 use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 use crate::theme::NotedTheme;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct VaultPath(String);
+
+impl VaultPath {
+    fn new(path: &str) -> VaultPath {
+        VaultPath(path.to_string())
+    }
+
+    fn to_path_buf(&self, vault: &Vault) -> PathBuf {
+        vault.base_path.join(&self.0)
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct VaultConfig {
     #[serde(default)]
-    pub theme: NotedTheme
+    pub theme: NotedTheme,
+    pub last_open_file: Option<VaultPath>
 }
 
 impl Default for VaultConfig {
     fn default() -> Self {
         VaultConfig {
-            ..Default::default()
+            theme: NotedTheme::default(),
+            last_open_file: None
         }
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Vault {
     base_path: PathBuf,
-    pub(crate) vault_config: Mutex<VaultConfig>,
+    pub(crate) vault_config: Arc<Mutex<VaultConfig>>,
     vault_config_directory: PathBuf,
     vault_config_file: PathBuf,
 }
@@ -42,7 +57,7 @@ impl Vault {
             let _ = std::fs::write(&vault_config_file, data);
         }
 
-        let vault_config = Mutex::new(vault_config);
+        let vault_config = Arc::new(Mutex::new(vault_config));
 
         let gitingore_file = vault_config_directory.join(".gitignore");
         if !gitingore_file.exists() {
@@ -63,12 +78,12 @@ impl Vault {
         let vault_config_directory = base_path.join(".noted");
         let vault_config_file = vault_config_directory.join("config.ron");
 
-        let vault_config = Mutex::new(if vault_config_file.exists() {
+        let vault_config = Arc::new(Mutex::new(if vault_config_file.exists() {
             let data = std::fs::read_to_string(&vault_config_file).unwrap();
             ron::de::from_str(&data).unwrap()
         } else {
             VaultConfig::default()
-        });
+        }));
 
         Vault {
             base_path,
@@ -82,6 +97,10 @@ impl Vault {
     pub fn save_config(&self) {
         let data = ron::ser::to_string_pretty(&*self.vault_config.lock().unwrap(), ron::ser::PrettyConfig::default()).unwrap();
         let _ = std::fs::write(&self.vault_config_file, data);
+    }
+
+    pub fn name(&self) -> String {
+        self.base_path.file_name().unwrap().to_str().unwrap().to_string()
     }
 }
 

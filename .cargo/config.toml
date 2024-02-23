@@ -3,4 +3,4 @@ rustflags = ["-Z", "threads=8"]
 incremental = true
 
 [toolchain]
-channel = "nightly"
+channel = "stable"

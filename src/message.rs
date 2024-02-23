@@ -1,4 +1,6 @@
-#[derive(Debug, Clone, Copy)]
-pub enum RootMessage {
+use crate::vault::Vault;
 
+#[derive(Debug, Clone)]
+pub enum RootMessage {
+    LoadVault(Vault)
 }
