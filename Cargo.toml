@@ -12,3 +12,6 @@ gpui = { git = "https://github.com/zed-industries/zed" }
 log = "0.4.20"
 env_logger = "0.9"
 chrono = "0.4.34"
+lazy_static = "1.4.0"
+colorsys = "0.6.7"
+rust-embed = { version = "8.0", features = ["include-exclude"] }

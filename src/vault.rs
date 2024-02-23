@@ -1,7 +1,7 @@
 use std::{path::PathBuf, sync::Arc};
 use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
-use crate::theme::NotedTheme;
+use crate::theme::ConfigTheme;
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct VaultPath(String);
@@ -19,14 +19,14 @@ impl VaultPath {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct VaultConfig {
     #[serde(default)]
-    pub theme: NotedTheme,
+    pub theme: ConfigTheme,
     pub last_open_file: Option<VaultPath>
 }
 
 impl Default for VaultConfig {
     fn default() -> Self {
         VaultConfig {
-            theme: NotedTheme::default(),
+            theme: ConfigTheme::default(),
             last_open_file: None
         }
     }
