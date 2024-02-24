@@ -1,17 +1,7 @@
-[package]
-name = "noted"
-version = "1.0.0"
-edition = "2021"
+[workspace]
+members = [
+    "noted",
+    "noted_macros"
+]
 
-[dependencies]
-serde = { version = "1.0.197", features = ["derive"] }
-ron = "0.8.1"
-keyring = "2.3.2"
-dirs = "5.0.1"
-gpui = { git = "https://github.com/zed-industries/zed" }
-log = "0.4.20"
-env_logger = "0.9"
-chrono = "0.4.34"
-lazy_static = "1.4.0"
-colorsys = "0.6.7"
-rust-embed = { version = "8.0", features = ["include-exclude"] }
+resolver = "2"

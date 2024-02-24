@@ -2,6 +2,7 @@ mod vault;
 mod system_config;
 mod theme;
 mod ui;
+mod icons;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -9,7 +10,7 @@ use std::sync::Mutex;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{App, AppContext, Bounds, Context, div, Hsla, IntoElement, Model, ParentElement, Point, px, relative, Render, Rgba, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowKind, WindowOptions};
+use gpui::{App, AppContext, Bounds, Context, div, Font, Hsla, IntoElement, Model, ParentElement, Point, px, relative, Render, Rgba, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowKind, WindowOptions};
 use gpui::Fill::Color;
 use lazy_static::lazy_static;
 use log::info;
@@ -19,7 +20,8 @@ use crate::ui::Shell;
 use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
-const MONTSERRAT: &[u8] = include_bytes!("../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
+const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
+const LUCIDE: &[u8] = include_bytes!("../../data/lucide/lucide.ttf");
 
 struct BaseModel {
     vault: Rc<RefCell<Vault>>,
@@ -63,6 +65,7 @@ fn app(cx: &mut AppContext) {
         theme: RefCell::new(system_theme.clone()),
     });
 
+    cx.text_system().add_fonts(vec![Cow::Borrowed(&LUCIDE)]).unwrap();
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
 
     cx.open_window(WindowOptions {
@@ -105,7 +108,7 @@ fn init_logger() {
             write!(buf, "{}", subtle.value("]"))?;
             writeln!(buf, " {}", record.args())
         })
-        .filter_level(log::LevelFilter::Warn)
+        .filter_level(log::LevelFilter::Debug)
         .filter_module("noted", log::LevelFilter::Trace)
         .init();
 }

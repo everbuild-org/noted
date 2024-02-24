@@ -58,8 +58,8 @@ impl Color {
     }
 
     pub fn opacity(&self, opacity: f32) -> Self {
-        let (r, g, b, a) = self.rgba_components();
-        Color::Rgba(r, g, b, (a * opacity) as u8)
+        let (r, g, b, _) = self.rgba_components();
+        Color::Rgba(r, g, b, (255.0 * opacity) as u8)
     }
 }
 
@@ -121,6 +121,7 @@ impl Into<Hsla> for &Color {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Theme {
     pub background: Color,
+    pub background_highlight: Color,
     pub foreground: Color,
     pub primary: Color,
     pub secondary: Color,

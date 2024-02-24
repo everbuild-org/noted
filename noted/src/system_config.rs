@@ -46,7 +46,7 @@ pub fn write(key: SystemConfigKey, value: &str) -> Result<(), ()> {
 }
 
 pub fn init_system() -> Vault {
-    let system_config = dirs::config_dir().unwrap().join("noted");
+    let system_config = dirs::config_dir().unwrap().join("..");
     let _ = std::fs::create_dir_all(&system_config);
 
     let default_vault = system_config.join("default_vault");
@@ -55,7 +55,7 @@ pub fn init_system() -> Vault {
     // make sure there is a welcome.md file in the default vault
     let welcome_file = default_vault.join("welcome.md");
     if !welcome_file.exists() {
-        let data = include_str!("../data/welcome.md");
+        let data = include_str!("../../data/welcome.md");
         let _ = std::fs::write(welcome_file, data);
     }
 

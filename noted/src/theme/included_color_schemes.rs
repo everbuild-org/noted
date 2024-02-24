@@ -5,6 +5,7 @@ use crate::theme::Theme;
 pub(crate) fn dark() -> Theme {
     return Theme {
         background: Hex("#1b1e28".to_string()),
+        background_highlight: Hex("#303340".to_string()),
         foreground: Hex("#ffffff".to_string()),
         primary: Hex("#5fb3a1".to_string()),
         secondary: Hex("#91b4d5".to_string()),

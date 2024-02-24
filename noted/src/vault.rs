@@ -59,9 +59,9 @@ impl Vault {
 
         let vault_config = Arc::new(Mutex::new(vault_config));
 
-        let gitingore_file = vault_config_directory.join(".gitignore");
+        let gitingore_file = vault_config_directory.join("../../.gitignore");
         if !gitingore_file.exists() {
-            let data = include_str!("../data/vault_gitignore");
+            let data = include_str!("../../data/vault_gitignore");
             let _ = std::fs::write(&gitingore_file, data);
         }
 

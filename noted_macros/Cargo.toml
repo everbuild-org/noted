@@ -1,0 +1,14 @@
+[package]
+name = "noted_macros"
+version = "1.0.0"
+edition = "2021"
+publish = false
+
+[lib]
+proc-macro = true
+
+[dependencies]
+lightningcss = "1.0.0-alpha.54"
+quote = "1.0.35"
+syn = "2.0.50"
+proc-macro2 = "1.0.78"
