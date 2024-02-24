@@ -1,7 +1,6 @@
 mod included_color_schemes;
 
 use std::fmt::{Debug, Formatter};
-use colorsys::Hsl;
 use gpui::{hsla, Hsla, rgba, Rgba};
 use serde::{Deserialize, Serialize};
 
@@ -51,6 +50,16 @@ impl Color {
 
     pub fn rgba(&self) -> Rgba {
         self.clone().into()
+    }
+
+    fn rgba_components(&self) -> (u8, u8, u8, f32) {
+        let rgba: Rgba = self.clone().into();
+        ((rgba.r * 255.0) as u8, (rgba.g * 255.0) as u8, (rgba.b * 255.0) as u8, rgba.a)
+    }
+
+    pub fn opacity(&self, opacity: f32) -> Self {
+        let (r, g, b, a) = self.rgba_components();
+        Color::Rgba(r, g, b, (a * opacity) as u8)
     }
 }
 

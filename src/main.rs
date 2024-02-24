@@ -1,7 +1,7 @@
-mod message;
 mod vault;
 mod system_config;
 mod theme;
+mod ui;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -9,32 +9,41 @@ use std::sync::Mutex;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{App, AppContext, Bounds, div, Hsla, IntoElement, ParentElement, Point, px, relative, Render, Rgba, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowKind, WindowOptions};
+use gpui::{App, AppContext, Bounds, Context, div, Hsla, IntoElement, Model, ParentElement, Point, px, relative, Render, Rgba, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowKind, WindowOptions};
 use gpui::Fill::Color;
 use lazy_static::lazy_static;
 use log::info;
 use crate::system_config::init_system;
 use crate::theme::Theme;
+use crate::ui::Shell;
 use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
 
-#[derive(Debug)]
-struct Noted {
-    vault: Rc<Mutex<Vault>>,
+struct BaseModel {
+    vault: Rc<RefCell<Vault>>,
     theme: RefCell<Theme>,
 }
 
+#[derive(Debug)]
+struct Noted {
+    model: Model<BaseModel>
+}
+
 impl Render for Noted {
-    fn render(&mut self, _cx: &mut ViewContext<Self>) -> impl IntoElement {
+    fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
+        let shell = cx.new_view(|_cx| Shell { model: self.model.clone() });
+
+        let theme = self.model.read(&cx).theme.borrow();
+
         div()
             .w(relative(1.0))
             .h(relative(1.0))
-            .bg(self.theme.borrow().background.fill())
-            .text_color(&self.theme.borrow().foreground)
+            .bg(theme.background.fill())
+            .text_color(&theme.foreground)
             .font("Montserrat")
-            .child("Hello, world!")
+            .child(shell)
     }
 }
 
@@ -46,7 +55,13 @@ fn main() {
 }
 
 fn app(cx: &mut AppContext) {
-    let vault = Rc::new(Mutex::new(init_system()));
+    let vault = Rc::new(RefCell::new(init_system()));
+    let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
+
+    let base = cx.new_model(|_cx| BaseModel {
+        vault: vault.clone(),
+        theme: RefCell::new(system_theme.clone()),
+    });
 
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
 
@@ -58,10 +73,8 @@ fn app(cx: &mut AppContext) {
         }),
         ..Default::default()
     }, |cx| {
-        let system_theme: Theme = vault.lock().unwrap().vault_config.try_lock().unwrap().theme.clone().into();
         let noted = Noted {
-            vault,
-            theme: RefCell::new(system_theme),
+            model: base
         };
 
         cx.new_view(|_cx| noted)
