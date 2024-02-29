@@ -13,7 +13,9 @@ _A Note-taking app for the 21st century_
 
 This project is in a very early stage of development and is not ready for use.
 
-I am currently rewriting this to integrate my two note-flows (hand-written and text based).
+If you want to colaborate, feel free to open an issue or a pull request. 
+Before you build large features, please open an issue to discuss it or reach out
+to us on [Discord](https://discord.gg/aF3J2X42cE).
 
 ### Features
 
@@ -39,19 +41,33 @@ I am currently rewriting this to integrate my two note-flows (hand-written and t
 - [ ] Export to HTML
 - [ ] Pen Stroke Support - Draw on the screen and save it in the file
 - [ ] Obsidian import
-- [ ] Shapes (Circle, Rectangle, Triangle, Line)
+- [ ] Basic Shapes (Circle, Rectangle, Triangle, Line)
 - [ ] Image Support
 - [ ] Image Export
-- [ ] Chemistry Animation Import from https://www.chemtube3d.com
 - [ ] Animation lib for presentations
 - [ ] -> Export to Video
 - [ ] -> Using Typescript 
 - [ ] -> Similar to Processing and Manim
+- [ ] typst formulas
 
 ### Installation
 
-Currently, there is no installation available. You can build it yourself by cloning the repository and running `yarn`
-followed by `yarn tauri build` in the root directory.
+Currently, there is no installation available. You can build it yourself by cloning the repository (`git clone --recurse-submodules <url>`) and doing the following:
 
-### Notes and Ideas
-- Anims: https://www.chemtube3d.com
+#### Windows
+
+Make sure you choose the windows version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
+
+#### Linux
+
+Make sure you choose the upstream version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
+
+#### MacOS
+
+Make sure you choose the upstream version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
+Note: I can't test it on MacOS, so I can't guarantee it will work.
+
+### License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+

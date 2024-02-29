@@ -108,7 +108,7 @@ fn init_logger() {
             write!(buf, "{}", subtle.value("]"))?;
             writeln!(buf, " {}", record.args())
         })
-        .filter_level(log::LevelFilter::Debug)
+        .filter_level(log::LevelFilter::Info)
         .filter_module("noted", log::LevelFilter::Trace)
         .init();
 }
