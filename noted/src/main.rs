@@ -3,6 +3,7 @@ mod system_config;
 mod theme;
 mod ui;
 mod icon;
+mod asset;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -11,6 +12,7 @@ use std::rc::Rc;
 use env_logger::Builder;
 use gpui::{App, AppContext, Bounds, Context, div, IntoElement, Model, ParentElement, Point, relative, Render, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowOptions};
 use log::info;
+use crate::asset::NotedAssetProvider;
 use crate::system_config::init_system;
 use crate::theme::Theme;
 use crate::ui::Shell;
@@ -49,7 +51,9 @@ fn main() {
     init_logger();
 
     info!("Starting up Noted v{}", VERSION);
-    App::new().run(app);
+    App::new()
+        .with_assets(NotedAssetProvider)
+        .run(app);
 }
 
 fn app(cx: &mut AppContext) {

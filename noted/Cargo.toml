@@ -14,6 +14,7 @@ chrono = "0.4.34"
 lazy_static = "1.4.0"
 colorsys = "0.6.7"
 rust-embed = { version = "8.0", features = ["include-exclude"] }
-lucide-gpui = { git = "https://github.com/everbuild-org/lucide-gpui.git", rev="e5b453fd44340fba317663544c9ac9ca5ba5d7a6" }
 
-gpui = { git = "https://github.com/zed-industries/zed.git#20acc123", rev = "20acc123"}
+gpui = { git = "https://github.com/zed-industries/zed.git", rev = "d7b5c88" }
+lucide-gpui_macros = { path = "../lucide-gpui_macros" }
+anyhow = "1.0.80"

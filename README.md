@@ -1,4 +1,4 @@
-# ![logo](icons/32x32.png) Noted!
+# ![logo](media/32x32.png) Noted!
 
 _A Note-taking app for the 21st century_
 

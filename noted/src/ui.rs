@@ -1,6 +1,6 @@
 use gpui::{div, IntoElement, Model, ParentElement, px, relative, Render, Styled, ViewContext};
-use lucide_gpui::Icon;
 use crate::BaseModel;
+use crate::icon::Icon;
 
 pub struct Shell {
     pub(crate) model: Model<BaseModel>,
