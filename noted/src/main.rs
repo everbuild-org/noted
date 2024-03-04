@@ -2,17 +2,14 @@ mod vault;
 mod system_config;
 mod theme;
 mod ui;
-mod icons;
+mod icon;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
-use std::sync::Mutex;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{App, AppContext, Bounds, Context, div, Font, Hsla, IntoElement, Model, ParentElement, Point, px, relative, Render, Rgba, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowKind, WindowOptions};
-use gpui::Fill::Color;
-use lazy_static::lazy_static;
+use gpui::{App, AppContext, Bounds, Context, div, IntoElement, Model, ParentElement, Point, relative, Render, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowOptions};
 use log::info;
 use crate::system_config::init_system;
 use crate::theme::Theme;
@@ -21,7 +18,6 @@ use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
-const LUCIDE: &[u8] = include_bytes!("../../data/lucide/lucide.ttf");
 
 struct BaseModel {
     vault: Rc<RefCell<Vault>>,
@@ -65,7 +61,6 @@ fn app(cx: &mut AppContext) {
         theme: RefCell::new(system_theme.clone()),
     });
 
-    cx.text_system().add_fonts(vec![Cow::Borrowed(&LUCIDE)]).unwrap();
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
 
     cx.open_window(WindowOptions {
@@ -108,7 +103,8 @@ fn init_logger() {
             write!(buf, "{}", subtle.value("]"))?;
             writeln!(buf, " {}", record.args())
         })
-        .filter_level(log::LevelFilter::Info)
+        .filter_level(log::LevelFilter::Debug)
+        .filter_module("gpui::platform::windows", log::LevelFilter::Info)
         .filter_module("noted", log::LevelFilter::Trace)
         .init();
 }

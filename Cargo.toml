@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "noted",
-    "noted_macros"
 ]
 
 resolver = "2"

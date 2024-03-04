@@ -1,5 +1,6 @@
 use gpui::{div, IntoElement, Model, ParentElement, px, relative, Render, Styled, ViewContext};
-use crate::{BaseModel, icons};
+use lucide_gpui::Icon;
+use crate::BaseModel;
 
 pub struct Shell {
     pub(crate) model: Model<BaseModel>,
@@ -38,8 +39,7 @@ impl Render for Shell {
                                 vec![
                                     div()
                                         .text_color(&theme.foreground.opacity(0.5))
-                                        .font("lucide")
-                                        .child(icons::lucide_a_arrow_down()),
+                                        .child(Icon::icon_a_arrow_down()),
                                     div()
                                         .text_color(&theme.foreground)
                                         .flex()
