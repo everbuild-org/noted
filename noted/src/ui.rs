@@ -1,6 +1,7 @@
 use gpui::{div, IntoElement, Model, ParentElement, px, relative, Render, Styled, ViewContext};
 use crate::BaseModel;
-use crate::icon::Icon;
+use crate::icon::{AppIconSize, Icon};
+use crate::theme::Theme;
 
 pub struct Shell {
     pub(crate) model: Model<BaseModel>,
@@ -8,7 +9,7 @@ pub struct Shell {
 
 impl Render for Shell {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let theme = self.model.read(cx).theme.borrow();
+        let theme = cx.global::<Theme>();
 
         div()
             .h(relative(1.0))
@@ -38,22 +39,29 @@ impl Render for Shell {
                             .children(
                                 vec![
                                     div()
-                                        .text_color(&theme.foreground.opacity(0.5))
-                                        .child(Icon::icon_a_arrow_down()),
+                                        .child(
+                                            Icon::icon_file_text()
+                                                .size(AppIconSize::StatusBar)
+                                                .color(&theme.foreground.opacity(0.5))
+                                        ),
                                     div()
                                         .text_color(&theme.foreground)
                                         .flex()
                                         .gap_2()
+                                        .items_center()
                                         .children(vec![
                                             div()
                                                 .text_color(&theme.foreground.opacity(0.5))
-                                                .child("Right Sidebar"),
+                                                .child("info bar"),
                                             div()
                                                 .text_color(&theme.foreground.opacity(0.25))
                                                 .child("|"),
                                             div()
-                                                .text_color(&theme.foreground.opacity(0.5))
-                                                .child("Right Sidebar Toggle"),
+                                                .child(
+                                                    Icon::icon_git_graph()
+                                                        .size(AppIconSize::StatusBar)
+                                                        .color(&theme.foreground.opacity(0.5))
+                                                )
                                         ]),
                                 ]
                             ),

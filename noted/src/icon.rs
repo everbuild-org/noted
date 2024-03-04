@@ -26,6 +26,18 @@ pub enum IconSize {
     Rem(f32),
 }
 
+pub enum AppIconSize {
+    StatusBar
+}
+
+impl Into<IconSize> for AppIconSize {
+    fn into(self) -> IconSize {
+        match self {
+            AppIconSize::StatusBar => IconSize::Px(16.0),
+        }
+    }
+}
+
 #[derive(Clone, IntoElement)]
 pub struct Icon {
     source: &'static str,
@@ -68,7 +80,7 @@ impl Icon {
 
         let svg = svg()
             .path(self.source)
-            .text_color(self.color.unwrap_or_else(|| gpui::Hsla::black()))
+            .text_color(self.color.unwrap_or_else(|| gpui::Hsla::white()))
             .size_full();
 
         el.child(svg.into_any_element())

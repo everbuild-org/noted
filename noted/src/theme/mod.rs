@@ -1,7 +1,7 @@
 mod included_color_schemes;
 
 use std::fmt::{Debug, Formatter};
-use gpui::{hsla, Hsla, rgba, Rgba};
+use gpui::{Global, hsla, Hsla, rgba, Rgba};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -127,6 +127,8 @@ pub struct Theme {
     pub secondary: Color,
     pub accent: Color,
 }
+
+impl Global for Theme {}
 
 impl Into<Theme> for ConfigTheme {
     fn into(self) -> Theme {

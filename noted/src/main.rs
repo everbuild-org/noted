@@ -22,8 +22,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
 
 struct BaseModel {
-    vault: Rc<RefCell<Vault>>,
-    theme: RefCell<Theme>,
+    vault: Rc<RefCell<Vault>>
 }
 
 #[derive(Debug)]
@@ -34,8 +33,7 @@ struct Noted {
 impl Render for Noted {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
         let shell = cx.new_view(|_cx| Shell { model: self.model.clone() });
-
-        let theme = self.model.read(&cx).theme.borrow();
+        let theme = cx.global::<Theme>();
 
         div()
             .w(relative(1.0))
@@ -61,8 +59,7 @@ fn app(cx: &mut AppContext) {
     let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
 
     let base = cx.new_model(|_cx| BaseModel {
-        vault: vault.clone(),
-        theme: RefCell::new(system_theme.clone()),
+        vault: vault.clone()
     });
 
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
@@ -79,6 +76,7 @@ fn app(cx: &mut AppContext) {
             model: base
         };
 
+        cx.set_global(system_theme);
         cx.new_view(|_cx| noted)
     });
 }
