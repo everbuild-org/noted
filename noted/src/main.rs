@@ -4,6 +4,7 @@ mod theme;
 mod ui;
 mod icon;
 mod asset;
+mod pane;
 
 use std::borrow::Cow;
 use std::cell::RefCell;

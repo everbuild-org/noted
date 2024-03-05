@@ -61,6 +61,11 @@ impl Color {
         let (r, g, b, _) = self.rgba_components();
         Color::Rgba(r, g, b, (255.0 * opacity) as u8)
     }
+
+    pub fn toggled_opacity(&self, max_opacity: f32, min_opacity: f32, toggle: bool) -> Self {
+        let opacity = if toggle { max_opacity } else { min_opacity };
+        self.opacity(opacity)
+    }
 }
 
 impl Into<Rgba> for Color {

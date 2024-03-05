@@ -13,7 +13,7 @@ pub fn asset_load_hook(path: &str) -> Option<anyhow::Result<Cow<'static, [u8]>>>
     return Some(match_icons!(path));
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum IconSize {
     Xs,
     Sm,
@@ -38,7 +38,7 @@ impl Into<IconSize> for AppIconSize {
     }
 }
 
-#[derive(Clone, IntoElement)]
+#[derive(Clone, Copy, IntoElement)]
 pub struct Icon {
     source: &'static str,
     size: IconSize,
