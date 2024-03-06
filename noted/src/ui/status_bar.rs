@@ -49,8 +49,11 @@ impl Render for StatusBar {
                             .child("info bar"),
                         div().text_color(&theme.foreground.opacity(0.25)).child("|"),
                         div().child(
-                            icon_toggle_button(self.panes.read(cx).files)
-                                .icon(Icon::icon_scatter_chart().size(AppIconSize::StatusBar)),
+                            icon_toggle_button(self.panes.read(cx).graph)
+                                .icon(Icon::icon_scatter_chart().size(AppIconSize::StatusBar))
+                                .on_toggle(cx.listener(move |_this, e, cx| {
+                                    cx.emit(PaneToggle::Graph(*e));
+                                })),
                         ),
                     ]),
             )

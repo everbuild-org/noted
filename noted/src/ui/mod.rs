@@ -28,6 +28,12 @@ impl Shell {
                             cx.notify();
                         });
                     },
+                    PaneToggle::Graph(value) => {
+                        cx.update_model(&panes, |model, cx| {
+                            model.graph = *value;
+                            cx.notify();
+                        });
+                    },
                 }
             }).detach();
 

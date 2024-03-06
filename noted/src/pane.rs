@@ -1,15 +1,18 @@
 pub struct Panes {
-    pub files: bool
+    pub files: bool,
+    pub graph: bool,
 }
 
 impl Default for Panes {
     fn default() -> Self {
         Self {
-            files: false
+            files: true,
+            graph: false,
         }
     }
 }
 
 pub enum PaneToggle {
-    Files(bool)
+    Files(bool),
+    Graph(bool),
 }
