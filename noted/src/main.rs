@@ -1,10 +1,11 @@
-mod vault;
-mod system_config;
-mod theme;
-mod ui;
-mod icon;
-mod asset;
-mod pane;
+pub mod vault;
+pub mod system_config;
+pub mod theme;
+pub mod ui;
+pub mod icon;
+pub mod asset;
+pub mod pane;
+pub mod prelude;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
