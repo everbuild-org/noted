@@ -126,7 +126,9 @@ impl Into<Hsla> for &Color {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Theme {
     pub background: Color,
+    pub background_secondary: Color,
     pub background_highlight: Color,
+    pub ui_line: Color,
     pub foreground: Color,
     pub primary: Color,
     pub secondary: Color,
