@@ -22,18 +22,19 @@ use crate::vault::Vault;
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
 
-struct BaseModel {
+#[derive(Debug, Clone)]
+struct VaultReference {
     vault: Rc<RefCell<Vault>>
 }
 
 #[derive(Debug)]
 struct Noted {
-    model: Model<BaseModel>
+    model: Model<VaultReference>
 }
 
 impl Render for Noted {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let shell = cx.new_view(|_cx| Shell { model: self.model.clone() });
+        let shell = Shell::build(cx, self.model.read(cx).clone());
         let theme = cx.global::<Theme>();
 
         div()
@@ -59,9 +60,7 @@ fn app(cx: &mut AppContext) {
     let vault = Rc::new(RefCell::new(init_system()));
     let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
 
-    let base = cx.new_model(|_cx| BaseModel {
-        vault: vault.clone()
-    });
+    let base = cx.new_model(|_cx| VaultReference { vault });
 
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
 

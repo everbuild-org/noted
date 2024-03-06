@@ -1,34 +1,52 @@
 mod status_bar;
 mod components;
 
-use gpui::{Context, div, IntoElement, Model, ModelContext, ParentElement, relative, Render, Styled, ViewContext, VisualContext};
-use crate::BaseModel;
-use crate::pane::{Panes, PaneToggle};
+use gpui::{div, relative, Context, IntoElement, Model, ParentElement, Render, Styled, View, ViewContext, VisualContext};
+use crate::pane::{PaneToggle, Panes};
 use crate::theme::Theme;
-use crate::ui::status_bar::StatusBar;
+use crate::{Noted, VaultReference};
+
+use self::status_bar::StatusBar;
 
 pub struct Shell {
-    pub(crate) model: Model<BaseModel>,
+    pub(crate) vault: Model<VaultReference>,
+    pub(crate) status_bar: View<StatusBar>,
+}
+
+impl Shell {
+    pub fn build(cx: &mut ViewContext<Noted>, base: VaultReference) -> View<Self> {
+        let view = cx.new_view(|cx| {
+            let vault = cx.new_model(|_cx| base);
+            let panes = cx.new_model(|_cx| Panes::default());
+
+            let status_bar = cx.new_view(|cx| StatusBar::new(cx, &panes));
+            cx.subscribe(&status_bar, move |shell, bar, event, cx| {
+                match event {
+                    PaneToggle::Files(value) => {
+                        cx.update_model(&panes, |model, cx| {
+                            model.files = *value;
+                            cx.notify();
+                        });
+                    },
+                }
+            }).detach();
+
+
+            Self {
+                vault,
+                status_bar,
+            }
+        });
+
+        view
+    }
 }
 
 impl Render for Shell {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let panes = cx.new_model(|_| Panes::default());
-        cx.new_model(|cx: &mut ModelContext<Panes>| {
-            cx.subscribe(&panes, |subscriber, _emitter, event, _cx| {
-                match event {
-                    PaneToggle::Files(target) => subscriber.files = target.clone(),
-                }
-            })
-                .detach();
-
-            Panes {
-                files: panes.read(cx).files.clone(),
-            }
-        });
-
-        let status_bar = cx.new_view(|ctx| StatusBar::new(ctx, panes));
         let theme = cx.global::<Theme>();
+
+        let status_bar = self.status_bar.clone();
 
         div()
             .h(relative(1.0))

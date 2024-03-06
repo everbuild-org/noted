@@ -22,7 +22,7 @@ impl IconToggleButton {
         self
     }
 
-    pub fn on_toggle(mut self, callback: impl Fn(bool, &mut WindowContext) + 'static) -> Self {
+    pub fn on_toggle(mut self, callback: impl Fn(&bool, &mut WindowContext) + 'static) -> Self {
         self.toggle.on_toggle(callback);
         self
     }

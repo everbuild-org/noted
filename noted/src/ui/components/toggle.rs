@@ -6,7 +6,7 @@ use crate::ui::components::clickable::clickable;
 pub struct ToggleButton {
     element: Option<Box<dyn Fn(bool) -> AnyElement>>,
     toggle_state: bool,
-    toggle_callback: Option<Box<dyn Fn(bool, &mut WindowContext)>>,
+    toggle_callback: Option<Box<dyn Fn(&bool, &mut WindowContext)>>,
 }
 
 impl ToggleButton {
@@ -21,7 +21,7 @@ impl ToggleButton {
     fn toggle(&self, cx: &mut WindowContext) {
         let new = !self.toggle_state;
         if let Some(callback) = &self.toggle_callback {
-            callback(new, cx);
+            callback(&new, cx);
         }
     }
 
@@ -30,7 +30,7 @@ impl ToggleButton {
         self
     }
 
-    pub fn on_toggle(&mut self, callback: impl Fn(bool, &mut WindowContext) + 'static) -> &mut Self {
+    pub fn on_toggle(&mut self, callback: impl Fn(&bool, &mut WindowContext) + 'static) -> &mut Self {
         self.toggle_callback = Some(Box::new(callback));
 
         self
