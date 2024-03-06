@@ -11,7 +11,7 @@ use std::cell::RefCell;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{App, AppContext, Bounds, Context, div, IntoElement, Model, ParentElement, Point, relative, Render, Styled, TitlebarOptions, ViewContext, VisualContext, WindowBounds, WindowOptions};
+use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions};
 use log::info;
 use crate::asset::NotedAssetProvider;
 use crate::system_config::init_system;
@@ -29,13 +29,29 @@ struct VaultReference {
 
 #[derive(Debug)]
 struct Noted {
-    model: Model<VaultReference>
+    model: Model<VaultReference>,
+    shell: View<Shell>
+}
+
+impl Noted {
+    pub fn build(vault: Model<VaultReference>, cx: &mut WindowContext) -> View<Self> {
+        let view = cx.new_view(|cx| {
+            let shell = Shell::build(cx, vault.read(cx).clone());
+
+            Self {
+                model: vault,
+                shell
+            }
+        });
+
+        view
+    }
 }
 
 impl Render for Noted {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let shell = Shell::build(cx, self.model.read(cx).clone());
         let theme = cx.global::<Theme>();
+        let shell = self.shell.clone();
 
         div()
             .w(relative(1.0))
@@ -59,7 +75,6 @@ fn main() {
 fn app(cx: &mut AppContext) {
     let vault = Rc::new(RefCell::new(init_system()));
     let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
-
     let base = cx.new_model(|_cx| VaultReference { vault });
 
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
@@ -72,12 +87,8 @@ fn app(cx: &mut AppContext) {
         }),
         ..Default::default()
     }, |cx| {
-        let noted = Noted {
-            model: base
-        };
-
         cx.set_global(system_theme);
-        cx.new_view(|_cx| noted)
+        Noted::build(base, cx)
     });
 }
 

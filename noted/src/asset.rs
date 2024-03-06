@@ -14,7 +14,7 @@ impl AssetSource for NotedAssetProvider {
         bail!("Unable to load asset: {}", path);
     }
 
-    fn list(&self, path: &str) -> anyhow::Result<Vec<SharedString>> {
+    fn list(&self, _path: &str) -> anyhow::Result<Vec<SharedString>> {
         return Ok(vec![]);
     }
 }

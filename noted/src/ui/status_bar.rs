@@ -1,12 +1,8 @@
 use crate::icon::{AppIconSize, Icon};
 use crate::pane::{PaneToggle, Panes};
 use crate::theme::Theme;
-use crate::ui::components::clickable::clickable;
 use crate::ui::components::icon_toggle::icon_toggle_button;
-use gpui::{
-    div, px, EventEmitter, IntoElement, Model, ParentElement, Render, Styled, ViewContext,
-    WindowContext,
-};
+use gpui::{div, px, EventEmitter, IntoElement, Model, ParentElement, Render, Styled, ViewContext};
 
 pub struct StatusBar {
     panes: Model<Panes>,
@@ -26,11 +22,6 @@ impl Render for StatusBar {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
         let theme = cx.global::<Theme>();
 
-        println!(
-            "StatusBar render, pane_files: {:?}",
-            self.panes.read(cx).files
-        );
-
         div()
             .h(px(35.0))
             .text_size(px(14.0))
@@ -40,21 +31,11 @@ impl Render for StatusBar {
             .justify_between()
             .px_2()
             .child(
-                div().child(
-                    icon_toggle_button(self.panes.read(cx).files)
-                        .icon(Icon::icon_folder().size(AppIconSize::StatusBar))
-                        .on_toggle({
-                            let view = cx.view().downgrade().upgrade().unwrap();
-                            move |e: &bool, cx: &mut WindowContext| {
-                                println!("^1 StatusBar icon_toggle_button on_toggle");
-                                view.update(cx, |view, cx| {
-                                    println!("^2 StatusBar icon_toggle_button on_toggle");
-                                    cx.emit(PaneToggle::Files(*e));
-                                    cx.notify();
-                                });
-                            }
-                        }),
-                ),
+                icon_toggle_button(self.panes.read(cx).files)
+                    .icon(Icon::icon_folder().size(AppIconSize::StatusBar))
+                    .on_toggle(cx.listener(move |_this, e, cx| {
+                        cx.emit(PaneToggle::Files(*e));
+                    })),
             )
             .child(
                 div()

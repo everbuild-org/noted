@@ -9,7 +9,7 @@ use crate::{Noted, VaultReference};
 use self::status_bar::StatusBar;
 
 pub struct Shell {
-    pub(crate) vault: Model<VaultReference>,
+    pub(crate) _vault: Model<VaultReference>,
     pub(crate) status_bar: View<StatusBar>,
 }
 
@@ -20,7 +20,7 @@ impl Shell {
             let panes = cx.new_model(|_cx| Panes::default());
 
             let status_bar = cx.new_view(|cx| StatusBar::new(cx, &panes));
-            cx.subscribe(&status_bar, move |shell, bar, event, cx| {
+            cx.subscribe(&status_bar, move |_shell, _bar, event, cx| {
                 match event {
                     PaneToggle::Files(value) => {
                         cx.update_model(&panes, |model, cx| {
@@ -33,7 +33,7 @@ impl Shell {
 
 
             Self {
-                vault,
+                _vault: vault,
                 status_bar,
             }
         });

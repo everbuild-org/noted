@@ -13,6 +13,7 @@ pub fn asset_load_hook(path: &str) -> Option<anyhow::Result<Cow<'static, [u8]>>>
     return Some(match_icons!(path));
 }
 
+#[allow(dead_code)]
 #[derive(Clone, Copy)]
 pub enum IconSize {
     Xs,
