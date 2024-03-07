@@ -1,11 +1,21 @@
+pub struct AnnotatedMarkdownLine {
+    pub line: MarkdownLine,
+    pub source: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum MarkdownComponent {
-    Header(usize, Vec<MarkdownComponent>),
-    UnorderedListElement(Vec<MarkdownComponent>),
-    OrderedListElement(usize, Vec<MarkdownComponent>),
-    TextSegment(String),
+pub enum MarkdownLine {
+    Header(usize, Vec<MarkdownSegment>),
+    UnorderedListElement(Vec<MarkdownSegment>),
+    OrderedListElement(usize, Vec<MarkdownSegment>),
+    Segments(Vec<MarkdownSegment>),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub enum MarkdownSegment {
+    Text(String),
     InlineCode(String),
-    Bold(Vec<MarkdownComponent>),
-    Italic(Vec<MarkdownComponent>),
-    Strikethrough(Vec<MarkdownComponent>),
+    Bold(Vec<MarkdownSegment>),
+    Italic(Vec<MarkdownSegment>),
+    Strikethrough(Vec<MarkdownSegment>),
 }
