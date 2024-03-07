@@ -54,17 +54,10 @@ to us on [Discord](https://discord.gg/aF3J2X42cE).
 
 Currently, there is no installation available. You can build it yourself by cloning the repository (`git clone --recurse-submodules <url>`) and doing the following:
 
-#### Windows
+```bash
+cargo run --release
+```
 
-Make sure you choose the windows version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
-
-#### Linux
-
-Make sure you choose the upstream version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
-
-#### MacOS
-
-Make sure you choose the upstream version of gpui in noted/Cargo.toml. Then use `cargo run` to run the application.
 Note: I can't test it on MacOS, so I can't guarantee it will work.
 
 ### License
