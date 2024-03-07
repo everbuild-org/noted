@@ -1,3 +1,8 @@
+pub struct AnnotatedMarkdownLine {
+    pub line: MarkdownLine,
+    pub source: String,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum MarkdownLine {
     Header(usize, Vec<MarkdownSegment>),

@@ -1,12 +1,14 @@
 
 use gpui::{Div, div, FontWeight, IntoElement, ParentElement, RenderOnce, Styled, WindowContext};
 use gpui::prelude::FluentBuilder;
-use crate::markdown::components::{MarkdownLine, MarkdownSegment};
+use crate::markdown::components::{AnnotatedMarkdownLine, MarkdownLine, MarkdownSegment};
 use crate::markdown::ui::segment::MarkdownSegmentRenderer;
+use crate::theme::Theme;
 
 #[derive(IntoElement)]
 pub struct MarkdownLineRenderer {
-    pub component: MarkdownLine
+    pub component: MarkdownLine,
+    pub source: String
 }
 
 fn segment_children_div(data: &Vec<MarkdownSegment>) -> Div {
@@ -18,8 +20,8 @@ fn segment_children_div(data: &Vec<MarkdownSegment>) -> Div {
 }
 
 impl MarkdownLineRenderer {
-    pub fn new(component: MarkdownLine) -> Self {
-        Self { component }
+    pub fn new(component: MarkdownLine, source: String) -> Self {
+        Self { component, source }
     }
 
     fn render_text_line(&self, _cx: &mut WindowContext, data: &Vec<MarkdownSegment>) -> Div {
@@ -38,11 +40,37 @@ impl MarkdownLineRenderer {
     }
 
     fn render_unordered_list(&self, cx: &mut WindowContext, data: &Vec<MarkdownSegment>) -> Div {
-        unimplemented!()
+        let theme = cx.global::<Theme>();
+        div()
+            .flex()
+            .flex_row()
+            .child(
+                div()
+                    .child("•")
+                    .w_5()
+                    .text_color(&theme.foreground.opacity(0.75))
+                    .flex()
+                    .justify_center()
+            )
+            .child(segment_children_div(data))
+            .flex_grow()
     }
 
     fn render_ordered_list(&self, cx: &mut WindowContext, pos: &usize, data: &Vec<MarkdownSegment>) -> Div {
-        unimplemented!()
+        let theme = cx.global::<Theme>();
+        div()
+            .flex()
+            .flex_row()
+            .child(
+                div()
+                    .child(format!("{}. ", pos))
+                    .min_w_5() // todo: make this a theme value
+                    .text_color(&theme.foreground.opacity(0.75))
+                    .flex()
+                    .justify_end()
+            )
+            .child(segment_children_div(data))
+            .flex_grow()
     }
 }
 
@@ -57,8 +85,8 @@ impl RenderOnce for MarkdownLineRenderer {
     }
 }
 
-impl From<MarkdownLine> for MarkdownLineRenderer {
-    fn from(value: MarkdownLine) -> Self {
-        MarkdownLineRenderer::new(value)
+impl From<AnnotatedMarkdownLine> for MarkdownLineRenderer {
+    fn from(value: AnnotatedMarkdownLine) -> Self {
+        MarkdownLineRenderer::new(value.line, value.source)
     }
 }

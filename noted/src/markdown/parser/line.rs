@@ -1,4 +1,4 @@
-use crate::markdown::components::MarkdownLine;
+use crate::markdown::components::{AnnotatedMarkdownLine, MarkdownLine};
 use crate::markdown::components::MarkdownLine::*;
 use crate::markdown::parser::parse_segment;
 
@@ -96,4 +96,13 @@ pub fn parse_text_line(line: &str) -> MarkdownLine {
     }
 
     Segments(parse_segment(line))
+}
+
+pub fn parse_annotated_text_line(source: &str) -> AnnotatedMarkdownLine {
+    let line = parse_text_line(source);
+
+    AnnotatedMarkdownLine {
+        line,
+        source: source.to_string(),
+    }
 }
