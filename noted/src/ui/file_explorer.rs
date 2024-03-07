@@ -1,5 +1,4 @@
-use gpui::{div, DragMoveEvent, Fill, Hsla, IntoElement, ParentElement, Pixels, px, Render, Styled, View, ViewContext, VisualContext};
-use log::info;
+use gpui::{div, IntoElement, ParentElement, Pixels, Render, Styled, View, ViewContext, VisualContext};
 use crate::theme::Theme;
 use crate::ui::components::drag_handle::{drag_handle, DragEvent, DragHandle, DragHandleDirection};
 
@@ -18,7 +17,7 @@ impl FileExplorerPane {
             )
         );
 
-        cx.subscribe(&handle, move |this, _handle, event, cx| {
+        cx.subscribe(&handle, move |this, _handle, event, _cx| {
             match event {
                 DragEvent::Move { rel } => {
                     this.transaction_width = this.transaction_width + rel.clone();

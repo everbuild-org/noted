@@ -1,9 +1,9 @@
 mod components;
 mod file_explorer;
 mod status_bar;
+mod editor;
 
 use crate::pane::{PaneToggle, Panes};
-use crate::theme::Theme;
 use crate::ui::file_explorer::FileExplorerPane;
 use crate::{Noted, VaultReference};
 use gpui::prelude::FluentBuilder;
@@ -12,6 +12,7 @@ use gpui::{
     VisualContext,
 };
 
+use self::editor::Editor;
 use self::status_bar::StatusBar;
 
 pub struct Shell {
@@ -19,6 +20,7 @@ pub struct Shell {
     pub(crate) panes: Model<Panes>,
     pub(crate) status_bar: View<StatusBar>,
     pub(crate) file_explorer: View<FileExplorerPane>,
+    pub(crate) editor: View<Editor>,
 }
 
 impl Shell {
@@ -46,12 +48,14 @@ impl Shell {
             .detach();
 
             let file_explorer = cx.new_view(|cx| FileExplorerPane::new(cx));
+            let editor = Editor::build(cx);
 
             Self {
                 _vault: vault,
                 status_bar,
                 file_explorer,
                 panes,
+                editor,
             }
         });
 
@@ -61,8 +65,6 @@ impl Shell {
 
 impl Render for Shell {
     fn render(&mut self, cx: &mut ViewContext<Self>) -> impl IntoElement {
-        let theme = cx.global::<Theme>();
-
         let status_bar = self.status_bar.clone();
 
         div().h(relative(1.0)).flex().children(vec![div()
@@ -78,7 +80,7 @@ impl Render for Shell {
                     .when(self.panes.read(cx).files, |cx| {
                         cx.child(self.file_explorer.clone())
                     })
-                    .child(div().child("Editor").text_color(&theme.foreground)),
+                    .child(self.editor.clone()),
             )
             .child(status_bar)])
     }

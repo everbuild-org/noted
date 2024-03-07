@@ -6,6 +6,7 @@ pub mod icon;
 pub mod asset;
 pub mod pane;
 pub mod prelude;
+pub mod markdown;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -24,12 +25,12 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
 
 #[derive(Debug, Clone)]
-struct VaultReference {
+pub struct VaultReference {
     vault: Rc<RefCell<Vault>>
 }
 
 #[derive(Debug)]
-struct Noted {
+pub struct Noted {
     model: Model<VaultReference>,
     shell: View<Shell>
 }
