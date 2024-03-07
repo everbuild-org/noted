@@ -1,5 +1,5 @@
 use gpui::prelude::FluentBuilder;
-use gpui::{div, DragMoveEvent, Fill, Hsla, InteractiveElement, StatefulInteractiveElement, IntoElement, Render, RenderOnce, Styled, VisualContext, WindowContext, FocusableView, AppContext, FocusHandle, EventEmitter, MouseButton};
+use gpui::{div, DragMoveEvent, Fill, Hsla, InteractiveElement, StatefulInteractiveElement, IntoElement, Render, RenderOnce, Styled, VisualContext, WindowContext, FocusableView, AppContext, FocusHandle, EventEmitter, MouseButton, red};
 use crate::prelude::*;
 use crate::theme::Theme;
 
@@ -50,10 +50,10 @@ impl Render for DragHandle {
         let id: &'static str = self.id;
         div()
             .when(self.direction == DragHandleDirection::Horizontal, |d| {
-                d.w_full().h_2()
+                d.w_full().h_6()
             })
             .when(self.direction == DragHandleDirection::Vertical, |d| {
-                d.w_2().h_full()
+                d.w_6().h_full()
             })
             .cursor_grab()
             .id(id)

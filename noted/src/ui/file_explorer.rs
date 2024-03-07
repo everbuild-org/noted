@@ -1,4 +1,4 @@
-use gpui::{div, IntoElement, ParentElement, Pixels, Render, Styled, View, ViewContext, VisualContext};
+use gpui::{div, IntoElement, ParentElement, Pixels, px, Render, Styled, View, ViewContext, VisualContext};
 use crate::theme::Theme;
 use crate::ui::components::drag_handle::{drag_handle, DragEvent, DragHandle, DragHandleDirection};
 
@@ -21,6 +21,9 @@ impl FileExplorerPane {
             match event {
                 DragEvent::Move { rel } => {
                     this.transaction_width = this.transaction_width + rel.clone();
+                    if this.transaction_width < px(200f32) {
+                        this.transaction_width = px(200f32);
+                    }
                 }
             }
         }).detach();
