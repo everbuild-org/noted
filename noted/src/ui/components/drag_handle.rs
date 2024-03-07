@@ -9,8 +9,8 @@ pub enum DragHandleDirection {
     Vertical,
 }
 
-pub enum DragEvent {
-    Move { rel: Pixels }
+pub struct DragEvent {
+    pub(crate) rel: Pixels
 }
 
 #[derive(Clone, Render)]
@@ -90,7 +90,7 @@ impl Render for DragHandle {
                 let new_size = new_mouse_pos - last_pos;
                 this.last_pos = Some(new_mouse_pos);
 
-                cx.emit(DragEvent::Move { rel: new_size });
+                cx.emit(DragEvent { rel: new_size });
             }))
             .child(self.drag_line(cx))
     }

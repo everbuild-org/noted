@@ -7,10 +7,7 @@ use crate::pane::{PaneToggle, Panes};
 use crate::ui::file_explorer::FileExplorerPane;
 use crate::{Noted, VaultReference};
 use gpui::prelude::FluentBuilder;
-use gpui::{
-    div, relative, Context, IntoElement, Model, ParentElement, Render, Styled, View, ViewContext,
-    VisualContext,
-};
+use gpui::{div, relative, Context, IntoElement, Model, ParentElement, Render, Styled, View, ViewContext, VisualContext, EventEmitter};
 
 use self::editor::Editor;
 use self::status_bar::StatusBar;
@@ -31,24 +28,12 @@ impl Shell {
 
             let panes_for_status_bar = panes.clone();
             let status_bar = cx.new_view(|cx| StatusBar::new(cx, &panes_for_status_bar));
-            cx.subscribe(&status_bar, move |_shell, _bar, event, cx| match event {
-                PaneToggle::Files(value) => {
-                    cx.update_model(&panes_for_status_bar, |model, cx| {
-                        model.files = *value;
-                        cx.notify();
-                    });
-                }
-                PaneToggle::Graph(value) => {
-                    cx.update_model(&panes_for_status_bar, |model, cx| {
-                        model.graph = *value;
-                        cx.notify();
-                    });
-                }
-            })
-            .detach();
 
             let file_explorer = cx.new_view(|cx| FileExplorerPane::new(cx));
             let editor = Editor::build(cx);
+
+            Self::subscribe_to_pane_toggle(panes.clone(), &status_bar, cx);
+            Self::subscribe_to_pane_toggle(panes.clone(), &file_explorer, cx);
 
             Self {
                 _vault: vault,
@@ -60,6 +45,24 @@ impl Shell {
         });
 
         view
+    }
+
+    fn subscribe_to_pane_toggle<T : EventEmitter<PaneToggle>>(panes: Model<Panes>, view: &View<T>, cx: &mut ViewContext<Self>) {
+        cx.subscribe(view, move |_shell, _panes, event, cx| match event {
+            PaneToggle::Files(value) => {
+                cx.update_model(&panes, |model, cx| {
+                    model.files = *value;
+                    cx.notify();
+                });
+            }
+            PaneToggle::Graph(value) => {
+                cx.update_model(&panes, |model, cx| {
+                    model.graph = *value;
+                    cx.notify();
+                });
+            }
+        })
+        .detach();
     }
 }
 
