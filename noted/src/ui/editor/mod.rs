@@ -5,9 +5,11 @@ use gpui::View;
 use gpui::ViewContext;
 use ropey::Rope;
 use crate::markdown::parse_annotated_text_line;
-use crate::markdown::ui::line::MarkdownLineRenderer;
+use crate::ui::editor::markdown::line::MarkdownLineRenderer;
 
 use super::Shell;
+
+pub mod markdown;
 
 pub struct Editor {
     content: Rope

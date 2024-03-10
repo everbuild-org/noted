@@ -2,8 +2,8 @@
 use gpui::{Div, div, FontWeight, IntoElement, ParentElement, RenderOnce, Styled, WindowContext};
 use gpui::prelude::FluentBuilder;
 use crate::markdown::components::{AnnotatedMarkdownLine, MarkdownLine, MarkdownSegment};
-use crate::markdown::ui::segment::MarkdownSegmentRenderer;
 use crate::theme::Theme;
+use crate::ui::editor::markdown::segment::MarkdownSegmentRenderer;
 
 #[derive(IntoElement)]
 pub struct MarkdownLineRenderer {
@@ -12,9 +12,9 @@ pub struct MarkdownLineRenderer {
 }
 
 fn segment_children_div(data: &Vec<MarkdownSegment>) -> Div {
-    let mut div = div();
+    let mut div = div().flex().flex_wrap();
     for segment in data {
-        div = div.child(MarkdownSegmentRenderer::from(segment.clone()));
+        div = div.children(MarkdownSegmentRenderer::from(segment.clone()));
     }
     div
 }
