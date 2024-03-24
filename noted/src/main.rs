@@ -13,7 +13,7 @@ use std::cell::RefCell;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions};
+use gpui::{div, relative, App, AppContext, Context, Render, IntoElement, Model, ParentElement, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowContext, WindowOptions};
 use log::info;
 use crate::asset::NotedAssetProvider;
 use crate::system_config::init_system;
@@ -23,6 +23,8 @@ use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
+const MONTSERRAT_ITALIC: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-MediumItalic.ttf");
+const MONTSERRAT_BOLD: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Bold.ttf");
 
 #[derive(Debug, Clone)]
 pub struct VaultReference {
@@ -79,10 +81,14 @@ fn app(cx: &mut AppContext) {
     let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
     let base = cx.new_model(|_cx| VaultReference { vault });
 
-    cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
+    cx.text_system()
+        .add_fonts(vec![
+            Cow::Borrowed(&MONTSERRAT),
+            Cow::Borrowed(&MONTSERRAT_ITALIC),
+            Cow::Borrowed(&MONTSERRAT_BOLD)
+        ]).unwrap();
 
     cx.open_window(WindowOptions {
-        bounds: WindowBounds::Fixed(Bounds::from_corners(Point::new(0f64.into(), 0f64.into()), Point::new(800f64.into(), 600f64.into()))),
         titlebar: Some(TitlebarOptions {
             title: Some(format!("Noted! {}", VERSION).into()),
             ..Default::default()
