@@ -23,6 +23,8 @@ use crate::vault::Vault;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
+const MONTSERRAT_ITALIC: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-MediumItalic.ttf");
+const MONTSERRAT_BOLD: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Bold.ttf");
 
 #[derive(Debug, Clone)]
 pub struct VaultReference {
@@ -79,7 +81,12 @@ fn app(cx: &mut AppContext) {
     let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
     let base = cx.new_model(|_cx| VaultReference { vault });
 
-    cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
+    cx.text_system()
+        .add_fonts(vec![
+            Cow::Borrowed(&MONTSERRAT),
+            Cow::Borrowed(&MONTSERRAT_ITALIC),
+            Cow::Borrowed(&MONTSERRAT_BOLD)
+        ]).unwrap();
 
     cx.open_window(WindowOptions {
         window_bounds: WindowBounds::Windowed(Bounds::from_corners(Point::new(0u32.into(), 0u32.into()), Point::new(800u32.into(), 600u32.into()))).into(),

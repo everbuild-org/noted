@@ -18,7 +18,7 @@ pub enum MarkdownSegment {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub struct  MarkdownSegmentDecoration {
+pub struct MarkdownSegmentDecoration {
     pub bold: bool,
     pub italic: bool,
     pub strikethrough: bool,
@@ -60,8 +60,25 @@ impl MarkdownSegment {
         match self {
             MarkdownSegment::Text(data, decoration) => {
                 let mut segments = vec![];
-                for segment in data.split_whitespace() {
-                    segments.push(MarkdownSegment::Text(segment.to_string() + " ", decoration.clone()));
+                let mut buffer = String::new();
+                for c in data.chars() {
+                    if "\r\n".contains(c) {
+                        continue;
+                    }
+
+                    if c.is_whitespace() {
+                        if !buffer.is_empty() {
+                            segments.push(MarkdownSegment::Text(buffer.clone(), decoration.clone()));
+                            buffer.clear();
+                        }
+                        segments.push(MarkdownSegment::Text(c.to_string(), decoration.clone()));
+                    } else {
+                        buffer.push(c);
+                    }
+                }
+
+                if !buffer.is_empty() {
+                    segments.push(MarkdownSegment::Text(buffer.clone(), decoration.clone()));
                 }
                 segments
             }
