@@ -11,7 +11,6 @@ pub fn parse_segment(line: &str) -> Vec<MarkdownSegment> {
     let mut in_strikethrough = false;
     let mut in_subscript = false;
     let mut in_superscript = false;
-    let mut in_tag = false;
 
     while end < line.len() {
         let c = line.chars().nth(end).unwrap();
@@ -94,14 +93,12 @@ pub fn parse_segment(line: &str) -> Vec<MarkdownSegment> {
 
             '<' => {
                 segment_done(&mut segments, &line, &mut start, &end, &in_bold, &in_italic, &in_strikethrough, &in_subscript, &in_superscript);
-                in_tag = true;
                 end += 1;
                 start += 1;
             }
 
             '>' => {
                 let tag = line[start..end].to_string();
-                in_tag = false;
 
                 end += 1;
                 start = end.clone();

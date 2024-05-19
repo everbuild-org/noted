@@ -44,10 +44,6 @@ impl MarkdownSegmentRenderer {
             .when(decoration.subscript, |mut this| this.pt_2())
             .whitespace_normal()
             .child(data.to_string())
-            .hover(|s| s.debug())
-            .on_mouse_down(gpui::MouseButton::Left, move |_e, _cx| {
-                info!("{:?}", deco);
-            })
     }
 
     fn render_code(&self, cx: &WindowContext, data: &String) -> Div {
