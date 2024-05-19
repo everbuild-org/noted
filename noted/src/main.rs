@@ -7,6 +7,7 @@ pub mod asset;
 pub mod pane;
 pub mod prelude;
 pub mod markdown;
+mod optional;
 
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -16,6 +17,7 @@ use env_logger::Builder;
 use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions, font};
 use log::info;
 use crate::asset::NotedAssetProvider;
+use crate::optional::initialize_optional;
 use crate::system_config::init_system;
 use crate::theme::Theme;
 use crate::ui::Shell;
@@ -96,7 +98,12 @@ fn app(cx: &mut AppContext) {
         }),
         ..Default::default()
     }, |cx| {
+        cx.on_window_should_close(|cx| {
+            cx.quit();
+            true
+        });
         cx.set_global(system_theme);
+        initialize_optional(cx);
         Noted::build(base, cx)
     });
 }

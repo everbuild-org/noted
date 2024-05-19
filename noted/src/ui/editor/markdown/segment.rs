@@ -1,4 +1,4 @@
-use gpui::{div, px, Div, Font, FontStyle, FontWeight, Hsla, InteractiveElement, IntoElement, ParentElement, RenderOnce, StrikethroughStyle, Styled, WindowContext};
+use gpui::{div, px, Div, FontStyle, FontWeight, Hsla, InteractiveElement, IntoElement, ParentElement, RenderOnce, StrikethroughStyle, Styled, WindowContext, font};
 use gpui::prelude::FluentBuilder;
 use log::info;
 use crate::markdown::components::{MarkdownSegment, MarkdownSegmentDecoration};
@@ -31,7 +31,7 @@ impl MarkdownSegmentRenderer {
                 refinement.font_style = Some(FontStyle::Italic);
                 this
             })
-            .when(/*decoration.strikethrough*/ true, |mut this| {
+            .when(decoration.strikethrough, |mut this| {
                 let refinement = this.text_style().get_or_insert_with(Default::default);
                 refinement.strikethrough = Some(StrikethroughStyle { thickness: px(1f32), color: Some(Hsla::white()) });
                 this
@@ -47,7 +47,7 @@ impl MarkdownSegmentRenderer {
     fn render_code(&self, cx: &WindowContext, data: &String) -> Div {
         let theme: &Theme = cx.global();
         div()
-            .font("Zed Mono")
+            .font(font("Zed Mono"))
             .p_0p5()
             .pl_1()
             .rounded_md()
