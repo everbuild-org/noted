@@ -2,6 +2,7 @@ mod components;
 mod file_explorer;
 mod status_bar;
 mod editor;
+mod information_bar;
 
 use crate::pane::{PaneToggle, Panes};
 use crate::ui::file_explorer::FileExplorerPane;
@@ -26,11 +27,11 @@ impl Shell {
             let vault = cx.new_model(|_cx| base);
             let panes = cx.new_model(|_cx| Panes::default());
 
-            let panes_for_status_bar = panes.clone();
-            let status_bar = cx.new_view(|cx| StatusBar::new(cx, &panes_for_status_bar));
-
             let file_explorer = cx.new_view(|cx| FileExplorerPane::new(cx));
             let editor = Editor::build(cx);
+
+            let panes_for_status_bar = panes.clone();
+            let status_bar = cx.new_view(|cx| StatusBar::new(cx, &panes_for_status_bar, &editor));
 
             Self::subscribe_to_pane_toggle(panes.clone(), &status_bar, cx);
             Self::subscribe_to_pane_toggle(panes.clone(), &file_explorer, cx);

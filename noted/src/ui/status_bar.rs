@@ -2,16 +2,20 @@ use crate::icon::{AppIconSize, Icon};
 use crate::pane::{PaneToggle, Panes};
 use crate::theme::Theme;
 use crate::ui::components::icon_toggle::icon_toggle_button;
-use gpui::{div, px, EventEmitter, IntoElement, Model, ParentElement, Render, Styled, ViewContext};
+use gpui::{div, px, EventEmitter, IntoElement, Model, ParentElement, Render, Styled, ViewContext, View};
+use crate::ui::editor::Editor;
+use crate::ui::information_bar::InformationBar;
 
 pub struct StatusBar {
     panes: Model<Panes>,
+    editor: View<Editor>
 }
 
 impl StatusBar {
-    pub fn new(_ctx: &mut ViewContext<StatusBar>, panes: &Model<Panes>) -> Self {
+    pub fn new(_ctx: &mut ViewContext<StatusBar>, panes: &Model<Panes>, editor: &View<Editor>) -> Self {
         Self {
             panes: panes.clone(),
+            editor: editor.clone()
         }
     }
 }
@@ -46,7 +50,7 @@ impl Render for StatusBar {
                     .children(vec![
                         div()
                             .text_color(&theme.foreground.opacity(0.5))
-                            .child("info bar"),
+                            .child(InformationBar(self.editor.clone())),
                         div().text_color(&theme.foreground.opacity(0.25)).child("|"),
                         div().child(
                             icon_toggle_button(self.panes.read(cx).graph)

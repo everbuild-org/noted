@@ -50,12 +50,17 @@ impl Render for DragHandle {
         let id: &'static str = self.id;
         div()
             .when(self.direction == DragHandleDirection::Horizontal, |d| {
-                d.w_full().h_6()
+                d
+                    .w_full()
+                    .h_6()
+                    .cursor_row_resize()
             })
             .when(self.direction == DragHandleDirection::Vertical, |d| {
-                d.w_6().h_full()
+                d
+                    .w_6()
+                    .h_full()
+                    .cursor_col_resize()
             })
-            .cursor_grab()
             .id(id)
             .on_drag(Draggable(self.direction), {
                 let weak = cx.view().downgrade();

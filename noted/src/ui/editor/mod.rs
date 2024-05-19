@@ -21,6 +21,15 @@ impl Editor {
             content: Rope::from_str(include_str!("../../../../data/welcome.md"))
         })
     }
+
+    pub fn count_characters(&self) -> usize {
+        self.content.len_chars()
+    }
+
+    pub fn count_words(&self) -> usize {
+        // todo make this faster by not allocating a new string the whole length of the content
+        self.content.to_string().split_whitespace().count()
+    }
 }
 
 impl Render for Editor {
