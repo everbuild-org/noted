@@ -52,13 +52,13 @@ impl Shell {
             PaneToggle::Files(value) => {
                 cx.update_model(&panes, |model, cx| {
                     model.files = *value;
-                    cx.notify();
+                    cx.refresh();
                 });
             }
             PaneToggle::Graph(value) => {
                 cx.update_model(&panes, |model, cx| {
                     model.graph = *value;
-                    cx.notify();
+                    cx.refresh();
                 });
             }
         })

@@ -1,4 +1,4 @@
-use gpui::div;
+use gpui::{div, px};
 use gpui::Render;
 use gpui::prelude::*;
 use gpui::View;
@@ -12,7 +12,7 @@ use super::Shell;
 pub mod markdown;
 
 pub struct Editor {
-    content: Rope
+    content: Rope,
 }
 
 impl Editor {
@@ -21,7 +21,6 @@ impl Editor {
             content: Rope::from_str(include_str!("../../../../data/welcome.md"))
         })
     }
-
 }
 
 impl Render for Editor {
@@ -29,8 +28,16 @@ impl Render for Editor {
         div()
             .flex_grow()
             .p_8()
-            .children(self.content.lines().map(|line| {
-                MarkdownLineRenderer::from(parse_annotated_text_line(line.as_str().expect("Failed to parse line")))
-            }))
+            .flex()
+            .flex_col()
+            .items_start()
+            .items_center()
+            .child(
+                div()
+                    .max_w(px(1000f32))
+                    .children(self.content.lines().map(|line| {
+                        MarkdownLineRenderer::from(parse_annotated_text_line(line.as_str().expect("Failed to parse line")))
+                    }))
+            )
     }
 }
