@@ -13,7 +13,7 @@ use std::cell::RefCell;
 use std::io::Write;
 use std::rc::Rc;
 use env_logger::Builder;
-use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions};
+use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions, font};
 use log::info;
 use crate::asset::NotedAssetProvider;
 use crate::system_config::init_system;
@@ -26,13 +26,13 @@ const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montse
 
 #[derive(Debug, Clone)]
 pub struct VaultReference {
-    vault: Rc<RefCell<Vault>>
+    vault: Rc<RefCell<Vault>>,
 }
 
 #[derive(Debug)]
 pub struct Noted {
     model: Model<VaultReference>,
-    shell: View<Shell>
+    shell: View<Shell>,
 }
 
 impl Noted {
@@ -42,7 +42,7 @@ impl Noted {
 
             Self {
                 model: vault,
-                shell
+                shell,
             }
         });
 
@@ -60,7 +60,7 @@ impl Render for Noted {
             .h(relative(1.0))
             .bg(theme.background.fill())
             .text_color(&theme.foreground)
-            .font("Montserrat")
+            .font(font("Montserrat"))
             .child(shell)
     }
 }
@@ -82,7 +82,7 @@ fn app(cx: &mut AppContext) {
     cx.text_system().add_fonts(vec![Cow::Borrowed(&MONTSERRAT)]).unwrap();
 
     cx.open_window(WindowOptions {
-        bounds: WindowBounds::Fixed(Bounds::from_corners(Point::new(0f64.into(), 0f64.into()), Point::new(800f64.into(), 600f64.into()))),
+        window_bounds: WindowBounds::Windowed(Bounds::from_corners(Point::new(0u32.into(), 0u32.into()), Point::new(800u32.into(), 600u32.into()))).into(),
         titlebar: Some(TitlebarOptions {
             title: Some(format!("Noted! {}", VERSION).into()),
             ..Default::default()

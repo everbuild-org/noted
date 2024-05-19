@@ -1,5 +1,5 @@
 use gpui::prelude::FluentBuilder;
-use gpui::{div, DragMoveEvent, Fill, Hsla, InteractiveElement, StatefulInteractiveElement, IntoElement, Render, RenderOnce, Styled, VisualContext, WindowContext, FocusableView, AppContext, FocusHandle, EventEmitter, MouseButton, red};
+use gpui::{div, DragMoveEvent, InteractiveElement, StatefulInteractiveElement, IntoElement, Render, Styled, VisualContext, FocusableView, AppContext, FocusHandle, EventEmitter};
 use crate::prelude::*;
 use crate::theme::Theme;
 

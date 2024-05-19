@@ -1,5 +1,5 @@
 use gpui::{div, EventEmitter, IntoElement, ParentElement, Pixels, px, Render, Styled, View, ViewContext, VisualContext};
-use crate::pane::{Panes, PaneToggle};
+use crate::pane::PaneToggle;
 use crate::theme::Theme;
 use crate::ui::components::drag_handle::{drag_handle, DragHandle, DragHandleDirection};
 
