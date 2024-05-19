@@ -49,7 +49,7 @@ impl Render for FileExplorerPane {
         let handle = self.handle.clone();
         div()
             .bg(theme.background_secondary.fill())
-            .w(self.width)
+            .min_w(self.width)
             .h_full()
             .flex()
             .flex_row()

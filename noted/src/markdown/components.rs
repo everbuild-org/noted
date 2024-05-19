@@ -22,6 +22,8 @@ pub struct MarkdownSegmentDecoration {
     pub bold: bool,
     pub italic: bool,
     pub strikethrough: bool,
+    pub subscript: bool,
+    pub superscript: bool,
 }
 
 impl Default for MarkdownSegmentDecoration {
@@ -30,6 +32,8 @@ impl Default for MarkdownSegmentDecoration {
             bold: false,
             italic: false,
             strikethrough: false,
+            subscript: false,
+            superscript: false,
         }
     }
 }
@@ -51,6 +55,16 @@ impl MarkdownSegmentDecoration {
 
     pub fn strikethrough(mut self) -> Self {
         self.strikethrough = true;
+        self
+    }
+
+    pub fn subscript(mut self) -> Self {
+        self.subscript = true;
+        self
+    }
+
+    pub fn superscript(mut self) -> Self {
+        self.superscript = true;
         self
     }
 }
