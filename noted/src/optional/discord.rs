@@ -3,6 +3,16 @@ use discord_presence::{Client, Event};
 use gpui::AppContext;
 use log::info;
 
+#[cfg(debug_assertions)]
+fn add_debug_state(activity: discord_presence::models::Activity) -> discord_presence::models::Activity {
+    activity.state("Development mode")
+}
+
+#[cfg(not(debug_assertions))]
+fn add_debug_state(activity: discord_presence::models::Activity) -> discord_presence::models::Activity {
+    activity
+}
+
 pub fn initialize(_cx: &AppContext) {
     thread::spawn(move || {
         let mut drpc = Client::new(1241546720874205244);
@@ -10,7 +20,7 @@ pub fn initialize(_cx: &AppContext) {
         drpc.block_until_event(Event::Ready).unwrap();
 
         drpc.set_activity(|activity| {
-            activity.details("Editing a note")
+            add_debug_state(activity.details("Editing a note")
                 .assets(|assets| {
                     assets
                         .large_image("notedicon")
@@ -22,6 +32,7 @@ pub fn initialize(_cx: &AppContext) {
                 .timestamps(|timestamps| {
                     timestamps.start(chrono::Utc::now().timestamp() as u64)
                 })
+            )
         }).unwrap();
 
         drpc.block_on().unwrap();
