@@ -8,7 +8,7 @@ use crate::pane::{PaneToggle, Panes};
 use crate::ui::file_explorer::FileExplorerPane;
 use crate::{Noted, VaultReference};
 use gpui::prelude::FluentBuilder;
-use gpui::{div, relative, Context, IntoElement, Model, ParentElement, Render, Styled, View, ViewContext, VisualContext, EventEmitter};
+use gpui::{div, relative, Context, IntoElement, Model, ParentElement, Render, Styled, View, ViewContext, VisualContext, EventEmitter, FocusHandle};
 
 use self::editor::Editor;
 use self::status_bar::StatusBar;
@@ -19,11 +19,14 @@ pub struct Shell {
     pub(crate) status_bar: View<StatusBar>,
     pub(crate) file_explorer: View<FileExplorerPane>,
     pub(crate) editor: View<Editor>,
+    pub(crate) focus_handle: FocusHandle
 }
 
 impl Shell {
     pub fn build(cx: &mut ViewContext<Noted>, base: VaultReference) -> View<Self> {
         let view = cx.new_view(|cx| {
+            let focus_handle = cx.focus_handle();
+
             let vault = cx.new_model(|_cx| base);
             let panes = cx.new_model(|_cx| Panes::default());
 
@@ -42,6 +45,7 @@ impl Shell {
                 file_explorer,
                 panes,
                 editor,
+                focus_handle,
             }
         });
 

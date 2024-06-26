@@ -9,6 +9,8 @@ discord = ["dep:discord-presence"]
 
 [dependencies]
 serde = { version = "1.0.197", features = ["derive"] }
+serde_json_lenient = "0.2.1"
+schemars = "0.8.21"
 ron = "0.8.1"
 keyring = "2.3.2"
 dirs = "5.0.1"

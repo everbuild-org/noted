@@ -1,32 +1,40 @@
-pub mod vault;
+pub mod asset;
+pub mod icon;
+pub mod keymap;
+pub mod markdown;
+mod optional;
+pub mod pane;
+pub mod prelude;
 pub mod system_config;
 pub mod theme;
 pub mod ui;
-pub mod icon;
-pub mod asset;
-pub mod pane;
-pub mod prelude;
-pub mod markdown;
-mod optional;
+pub mod vault;
 
-use std::borrow::Cow;
-use std::cell::RefCell;
-use std::io::Write;
-use std::rc::Rc;
-use env_logger::Builder;
-use gpui::{div, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement, Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds, WindowContext, WindowOptions, font};
-use log::info;
 use crate::asset::NotedAssetProvider;
 use crate::optional::initialize_optional;
 use crate::system_config::init_system;
 use crate::theme::Theme;
 use crate::ui::Shell;
 use crate::vault::Vault;
+use env_logger::Builder;
+use gpui::{
+    div, font, relative, App, AppContext, Bounds, Context, IntoElement, Model, ParentElement,
+    Point, Render, Styled, TitlebarOptions, View, ViewContext, VisualContext, WindowBounds,
+    WindowContext, WindowOptions,
+};
+use log::info;
+use std::borrow::Cow;
+use std::cell::RefCell;
+use std::io::Write;
+use std::rc::Rc;
+use crate::keymap::register_default_keymap;
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 const MONTSERRAT: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Medium.ttf");
-const MONTSERRAT_ITALIC: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-MediumItalic.ttf");
-const MONTSERRAT_BOLD: &[u8] = include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Bold.ttf");
+const MONTSERRAT_ITALIC: &[u8] =
+    include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-MediumItalic.ttf");
+const MONTSERRAT_BOLD: &[u8] =
+    include_bytes!("../../data/montserrat/fonts/ttf/Montserrat-Bold.ttf");
 
 #[derive(Debug, Clone)]
 pub struct VaultReference {
@@ -41,16 +49,14 @@ pub struct Noted {
 
 impl Noted {
     pub fn build(vault: Model<VaultReference>, cx: &mut WindowContext) -> View<Self> {
-        let view = cx.new_view(|cx| {
+        cx.new_view(|cx| {
             let shell = Shell::build(cx, vault.read(cx).clone());
 
             Self {
                 model: vault,
                 shell,
             }
-        });
-
-        view
+        })
     }
 }
 
@@ -80,32 +86,66 @@ fn main() {
 
 fn app(cx: &mut AppContext) {
     let vault = Rc::new(RefCell::new(init_system()));
-    let system_theme: Theme = vault.borrow().vault_config.lock().unwrap().theme.clone().into();
+    let system_theme: Theme = vault
+        .borrow()
+        .vault_config
+        .lock()
+        .unwrap()
+        .theme
+        .clone()
+        .into();
     let base = cx.new_model(|_cx| VaultReference { vault });
+
+    register_default_keymap(cx);
 
     cx.text_system()
         .add_fonts(vec![
             Cow::Borrowed(&MONTSERRAT),
             Cow::Borrowed(&MONTSERRAT_ITALIC),
-            Cow::Borrowed(&MONTSERRAT_BOLD)
-        ]).unwrap();
+            Cow::Borrowed(&MONTSERRAT_BOLD),
+        ])
+        .unwrap();
 
-    cx.open_window(WindowOptions {
-        window_bounds: WindowBounds::Windowed(Bounds::from_corners(Point::new(0u32.into(), 0u32.into()), Point::new(800u32.into(), 600u32.into()))).into(),
-        titlebar: Some(TitlebarOptions {
-            title: Some(format!("Noted! {}", VERSION).into()),
+    let window = cx.open_window(
+        WindowOptions {
+            window_bounds: WindowBounds::Windowed(Bounds::from_corners(
+                Point::new(0u32.into(), 0u32.into()),
+                Point::new(800u32.into(), 600u32.into()),
+            ))
+                .into(),
+            titlebar: Some(TitlebarOptions {
+                title: Some(format!("Noted! {}", VERSION).into()),
+                ..Default::default()
+            }),
             ..Default::default()
-        }),
-        ..Default::default()
-    }, |cx| {
-        cx.on_window_should_close(|cx| {
-            cx.quit();
-            true
-        });
-        cx.set_global(system_theme);
-        initialize_optional(cx);
-        Noted::build(base, cx)
-    });
+        },
+        |cx| {
+            cx.on_window_should_close(|cx| {
+                cx.quit();
+                true
+            });
+
+            cx.set_global(system_theme);
+            initialize_optional(cx);
+
+            Noted::build(base, cx)
+        },
+    );
+
+    // Focus editor per default
+    window.update(cx, |view, cx| {
+        cx.update_view(
+            &view.shell,
+            |shell, cx|
+                cx.update_view(
+                    &shell.editor,
+                    |editor, cx|
+                        editor.focus(cx),
+                ),
+        );
+
+        cx.activate(true);
+    }).unwrap();
 }
 
 fn init_logger() {

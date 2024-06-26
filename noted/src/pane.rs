@@ -6,7 +6,7 @@ pub struct Panes {
 impl Default for Panes {
     fn default() -> Self {
         Self {
-            files: true,
+            files: false,
             graph: false,
         }
     }
