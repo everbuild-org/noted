@@ -1,7 +1,0 @@
-[workspace]
-members = [
-    "noted",
-    "lucide-gpui_macros"
-]
-
-resolver = "2"

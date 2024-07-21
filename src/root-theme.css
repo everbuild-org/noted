@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--text: #150f14;
+		--background: #f0eaf0;
+		--background-card: #d8d2d8;
+		--primary: #533c50;
+		--secondary: #b89e9d;
+		--accent: #80675b;
+	}
+	.dark {
+		--text: #f1ebf0;
+		--background: #150f15;
+		--background-card: #302430;
+		--primary: #c4adc1;
+		--secondary: #614746;
+		--accent: #a48c80;
+	}
+}
+
+
+html {
+	overflow: hidden;
+	height: 100%;
+}
+
+body {
+	height: 100%;
+	overflow: auto;
+}
+
+body {
+	scrollbar-color: var(--accent) var(--background);
+}
+
+::-webkit-scrollbar-track {
+	background: var(--background);
+}
+
+
+::-webkit-scrollbar-thumb {
+	background: var(--primary);
+}
