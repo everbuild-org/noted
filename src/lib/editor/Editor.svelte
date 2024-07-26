@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { compileSource } from "./compiler";
-	import MdRender from "./render/MdRender.svelte";
+    import {compileSource} from "./compiler";
+    import MdRender from "./render/MdRender.svelte";
 
     export let source: string;
     if (!source) source = "";
@@ -11,7 +11,7 @@
 
     function insertCharacterIntoSelection(char: string) {
         source = source.substring(0, selection[0]) + char + source.substring(selection[1]);
-        selection = [selection[0]+1, selection[0]+1];
+        selection = [selection[0] + 1, selection[0] + 1];
     }
 
     function deleteCharacterFromSelection(direction: 1 | -1) {
@@ -19,10 +19,10 @@
             source = source.substring(0, selection[0]) + source.substring(selection[1]);
             selection = [selection[0], selection[0]];
         } else if (selection[0] > 0 && direction == -1) {
-            source = source.substring(0, selection[0]-1) + source.substring(selection[1]);
-            selection = [selection[0]-1, selection[0]-1];
+            source = source.substring(0, selection[0] - 1) + source.substring(selection[1]);
+            selection = [selection[0] - 1, selection[0] - 1];
         } else if (selection[0] < source.length && direction == 1) {
-            source = source.substring(0, selection[0]) + source.substring(selection[1]+1);
+            source = source.substring(0, selection[0]) + source.substring(selection[1] + 1);
             selection = [selection[0], selection[0]];
         }
     }
@@ -33,9 +33,41 @@
             newSelection = Math.min(newSelection, source.length);
             newSelection = Math.max(newSelection, 0);
             selection = [newSelection, newSelection];
-            console.log("here-we-go", selection);
         } else {
             //TODO resolve longer selections
+        }
+    }
+
+    function simpleCursorMoveUpDown(direction: 1 | -1) {
+        let prev = 0;
+        let next = source.length;
+        let current = 0;
+        for (let i = 0; i < source.length; i++) {
+            if (i < selection[0]) {
+                if (source[i] !== "\n") continue;
+                prev = current;
+                current = i;
+            } else {
+                if (source[i] !== "\n") continue;
+
+                next = i;
+                break;
+            }
+        }
+
+        if (direction < 0) {
+            selection = [prev, prev];
+        } else {
+            next = Math.min(next+1, source.length);
+            selection = [next, next];
+        }
+    }
+
+    function moveUpDown(direction: 1 | -1) {
+        if (selection[0] == selection[1]) {
+            simpleCursorMoveUpDown(direction)
+        } else {
+            //TODO selections
         }
     }
 
@@ -62,6 +94,12 @@
         } else if (event.key == "ArrowRight") {
             // TODO SHIFT/CTRL
             moveLeftRight(1);
+        } else if (event.key == "ArrowUp") {
+            // TODO SHIFT
+            moveUpDown(-1);
+        } else if (event.key == "ArrowDown") {
+            // TODO SHIFT
+            moveUpDown(1);
         }
 
         // TODO arrow keys/ctrl+vim motions
@@ -73,6 +111,6 @@
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div class="themable-editor w-full h-full outline-none" tabindex="-1" on:keydown={onKeydown} on:click={onClick}>
     <div class="max-w-full mb-10">
-        <MdRender {compiledData} />
+        <MdRender {compiledData}/>
     </div>
 </div>
