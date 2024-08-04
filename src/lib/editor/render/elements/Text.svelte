@@ -10,4 +10,4 @@
     class:underline={element.underline} 
     class:line-through={element.strikethrough} 
     class:italic={element.italic}
-><RawText text={element.rawText} /></span>
+><RawText text={element.rawText} startPosition={element.elementStart} /></span>

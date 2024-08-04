@@ -9,6 +9,12 @@
 
     $: compiledData = compileSource(source, selection);
 
+    function generateNonce() {
+        return Math.random().toFixed(5).replace(".", "")
+    }
+
+    const nonce = generateNonce();
+
     function insertCharacterIntoSelection(char: string) {
         source = source.substring(0, selection[0]) + char + source.substring(selection[1]);
         selection = [selection[0] + 1, selection[0] + 1];
@@ -63,9 +69,33 @@
         }
     }
 
+    function visualCursorMoveUpDown(direction: 1 | -1) {
+        let currentElement = document.querySelector(`#editor-${nonce} [data-pos="${selection[0]}"]`)
+        if (!currentElement) {
+            simpleCursorMoveUpDown(direction)
+            return
+        }
+
+        let rect = currentElement.getBoundingClientRect()
+        let elements = document.elementsFromPoint(rect.x, rect.y+rect.height+5).filter((el) => Object.getOwnPropertyNames((el as HTMLElement).dataset).includes("pos"))
+        if (elements.length == 0) {
+            simpleCursorMoveUpDown(direction)
+            return;
+        }
+
+        let element = elements[0] as HTMLElement;
+        let pos = parseInt(element.dataset.pos as string);
+
+        if (selection[0] == selection[1]) {
+            selection = [pos-1, pos-1]
+        } else {
+            // TODO selections
+        }
+    }
+
     function moveUpDown(direction: 1 | -1) {
         if (selection[0] == selection[1]) {
-            simpleCursorMoveUpDown(direction)
+            visualCursorMoveUpDown(direction)
         } else {
             //TODO selections
         }
@@ -109,7 +139,7 @@
 <!-- This is temporary and I don't want to be yelled at -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<div class="themable-editor w-full h-full outline-none" tabindex="-1" on:keydown={onKeydown} on:click={onClick}>
+<div class="themable-editor w-full h-full outline-none border border-red-500" tabindex="-1" on:keydown={onKeydown} on:click={onClick} id="editor-{nonce}">
     <div class="max-w-full mb-10">
         <MdRender {compiledData}/>
     </div>

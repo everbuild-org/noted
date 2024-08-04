@@ -5,4 +5,4 @@
     export let element: MonospaceElement;
 </script>
 
-<RawText text={element.rawText} />
+<RawText text={element.rawText} startPosition={element.elementStart} />
