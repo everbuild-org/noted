@@ -38,5 +38,4 @@ core.*
 
 noted/lucide/
 /lucide/
-/.direnv/flake-profile
-/.direnv/flake-profile-1-link
+/.direnv/
